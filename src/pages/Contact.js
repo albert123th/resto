@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "./../components/Layout/Layout";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import MailIcon from "@mui/icons-material/Mail";
 import CallIcon from "@mui/icons-material/Call";
 import {
   Box,
+  Button,
   Paper,
   Table,
   TableBody,
@@ -12,17 +13,46 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 
 const Contact = () => {
+  const [feedback, setFeedback] = useState("");
+
+  const handleFeedbackChange = (event) => {
+    setFeedback(event.target.value);
+  };
+
+  const handleSubmitFeedback = async () => {
+    try {
+      const response = await fetch(
+        "YOUR_GOOGLE_SCRIPT_URL_HERE",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ feedback }),
+        }
+      );
+      if (response.ok) {
+        alert("Feedback submitted successfully!");
+        setFeedback("");
+      } else {
+        alert("Failed to submit feedback.");
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("An error occurred while submitting feedback.");
+    }
+  };
+
   return (
     <Layout>
       <Box sx={{ my: 5, ml: 10, "& h4": { fontWeight: "bold", mb: 2 } }}>
-        <Typography variant="h4">Contact My Resturant</Typography>
-        <p>
-          
-        </p>
+        <Typography variant="h4">Contact My Restaurant</Typography>
+        <p></p>
       </Box>
       <Box
         sx={{
@@ -66,6 +96,27 @@ const Contact = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="h5">Submit Feedback</Typography>
+          <TextField
+            sx={{ mt: 1 }}
+            label="Feedback"
+            variant="outlined"
+            multiline
+            rows={4}
+            value={feedback}
+            onChange={handleFeedbackChange}
+            fullWidth
+          />
+          <Button
+            sx={{ mt: 2 }}
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitFeedback}
+          >
+            Submit
+          </Button>
+        </Box>
       </Box>
     </Layout>
   );
